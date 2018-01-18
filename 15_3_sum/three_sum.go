@@ -1,31 +1,36 @@
 package three_sum
 
-import ()
+import (
+	"sort"
+)
 
 func threeSum(numbers []int) [][]int {
-	calculator := TreeSumCalculator{numbers, [][]int{}}
-	calculator.CalculateSums()
-	return calculator.result
-}
+	results := [][]int{}
 
-type TreeSumCalculator struct {
-	numbers []int
-	result  [][]int
-}
+	sort.Ints(numbers)
 
-func (self *TreeSumCalculator) CalculateSums() {
-	self.calculateSum(0, 1, len(self.numbers)-1)
-}
+	for a := 0; a < len(numbers)-2; a++ {
 
-func (self *TreeSumCalculator) calculateSum(index_a, index_b, index_c int) {
-	a, b, c := self.numbers[index_a], self.numbers[index_b], self.numbers[index_c]
+		if a > 0 && numbers[a-1] == numbers[a] {
+			continue // skip duplicates
+		}
 
-	sum := a + b + c
+		b, c := a+1, len(numbers)-1
 
-	switch {
-	case sum == 0:
-		self.result = append(self.result, []int{a, b, c})
-		return
+		for b < c {
+			sum := numbers[a] + numbers[b] + numbers[c]
+			if sum == 0 {
+				results = append(results, []int{numbers[a], numbers[b], numbers[c]})
+
+				for b++; b < c && numbers[b-1] == numbers[b]; b++ {
+					// advance b but skip duplicates
+				}
+			} else if sum < 0 {
+				b++
+			} else {
+				c--
+			}
+		}
 	}
-
+	return results
 }
